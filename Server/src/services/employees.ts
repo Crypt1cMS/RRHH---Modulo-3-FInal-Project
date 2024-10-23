@@ -130,6 +130,28 @@ const deleteEmployee = async (id: string) => {
     }
 };
 
+const reactivateEmployee = async (id: string) => {
+    const query = `
+        UPDATE public.employees
+        SET status = true
+        WHERE employee_id = $1
+        RETURNING *;
+    `;
+
+    try {
+        const result = await pool.query(query, [id]);
+
+        if (result.rowCount === 0) {
+            return false;
+        }
+
+        return true;
+    } catch (err) {
+        const error = err as Error;
+        throw new Error(`Unable to reactivate employee: ${error.message}`);
+    }
+};
+
 export {
     getAllEmployees,
     getEmployeeById,
@@ -137,5 +159,6 @@ export {
     findEmployeeByCedula,
     findEmployeeByEmail,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
+    reactivateEmployee,
 };

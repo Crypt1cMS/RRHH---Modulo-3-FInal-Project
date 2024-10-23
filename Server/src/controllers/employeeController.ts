@@ -92,10 +92,29 @@ const deleteEmployee = async (req: Request, res: Response) => {
     }
 };
 
+const reactivateEmployee = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const isReactivated = await employeeService.reactivateEmployee(id);
+        
+        if (!isReactivated) {
+            res.status(404).json({ message: "Employee not found" });
+        } else {
+            res.status(200).json({ message: "Employee reactivated successfully." });
+        }
+
+    } catch (err) {
+        const error = err as Error;
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     getEmployees,
     getEmployeeById,
     createEmployee,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
+    reactivateEmployee,
 }
