@@ -1,0 +1,23 @@
+:root {
+    --h1-font-size: 2rem;
+    --h2-font-size: 1.75rem;
+    --h3-font-size: 1.5rem;
+    --h4-font-size: 1.25rem;
+    --p-font-size: 0.875rem;
+    --background-color: rgba(217, 217, 217, 1);
+    --main-backgrrund-color: white;
+    --accent-color: #2176FF;
+    --secondary-accent-color: #33A1FD;
+}
+
+*, ::after, ::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    font-family: "Poppins", sans-serif;
+}
+
+html, body {
+    background: var(--background-color);
+}
