@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import * as employeeService from '../services/employees';
+import * as employeeService from '../services/employeesService';
 
 const getEmployees = async (req: Request, res: Response) => {
     try {
@@ -35,7 +35,7 @@ const createEmployee = async (req: Request, res: Response) => {
         const existingEmployeeEmail = await employeeService.findEmployeeByEmail(employeeData.email);
         const existingEmployeeCedula = await employeeService.findEmployeeByCedula(employeeData.cedula);
 
-        if (!employeeData.full_name || !employeeData.email || !employeeData.cedula || !employeeData.price_per_hour || !employeeData.role) {
+        if (!employeeData.full_name || !employeeData.user_name || !employeeData.password || !employeeData.email || !employeeData.cedula || !employeeData.price_per_hour || !employeeData.role) {
             res.status(400).json({ message: "All fields are required, please fill all of them." });
         }
 
@@ -62,7 +62,7 @@ const updateEmployee = async (req: Request, res: Response) => {
     const existingEmployeeCedula = await employeeService.findEmployeeByCedula(employeeData.cedula);
 
     try {
-        // Validate required fields
+
         if (!employeeData.full_name || !employeeData.email || !employeeData.cedula || !employeeData.price_per_hour || !employeeData.role) {
             res.status(400).json({ message: "All fields are required, please fill all of them." });
         } else if (existingEmployeeCedula) {
@@ -70,8 +70,8 @@ const updateEmployee = async (req: Request, res: Response) => {
         } else if (existingEmployeeEmail) {
             res.status(409).json({ message: "An employee with this email already exists." });
         } else {
-            const updatedEmployee = await employeeService.updateEmployee(id, employeeData); // Call the service to update the employee
-            res.status(200).json(updatedEmployee); // Return the updated employee data
+            const updatedEmployee = await employeeService.updateEmployee(id, employeeData); 
+            res.status(200).json(updatedEmployee); 
         }
 
     } catch (err) {
@@ -81,10 +81,10 @@ const updateEmployee = async (req: Request, res: Response) => {
 };
 
 const deleteEmployee = async (req: Request, res: Response) => {
-    const { id } = req.params; // Get the employee ID from the request parameters
+    const { id } = req.params; 
 
     try {
-        const deletedEmployee = await employeeService.deleteEmployee(id); // Call the service to soft delete the employee
+        const deletedEmployee = await employeeService.deleteEmployee(id);
         res.status(200).json({ message: "Employee deleted successfully", employee: deletedEmployee });
     } catch (err) {
         const error = err as Error;
