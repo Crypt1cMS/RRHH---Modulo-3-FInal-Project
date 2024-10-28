@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import employeeRoutes from './routes/employeesRoutes';
 import loginRoutes from './routes/authlogInRoutes';
+import roleRoutes from './routes/rolesRoutes'
 
 const app = express();
 app.use(cors());
@@ -14,3 +15,4 @@ app.listen(PORT, () => {
 
 app.use('/employees', employeeRoutes);
 app.use('/auth', loginRoutes); 
+app.use('/roles', roleRoutes)

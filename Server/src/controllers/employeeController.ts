@@ -32,53 +32,51 @@ const getEmployeeById = async (req: Request, res: Response) => {
 const createEmployee = async (req: Request, res: Response) => {
     try {
         const employeeData = req.body;
-        const existingEmployeeEmail = await employeeService.findEmployeeByEmail(employeeData.email);
         const existingEmployeeCedula = await employeeService.findEmployeeByCedula(employeeData.cedula);
+        const accountId = await employeeService.createAccount(employeeData.user_name, employeeData.password);
+        const newEmployeeData = { ...employeeData, account_id: accountId, is_active: true };
 
-        if (!employeeData.full_name || !employeeData.user_name || !employeeData.password || !employeeData.email || !employeeData.cedula || !employeeData.price_per_hour || !employeeData.role) {
+
+        if (!employeeData.full_name || !employeeData.user_name || !employeeData.password || !employeeData.cedula || !employeeData.role_id) {
             res.status(400).json({ message: "All fields are required, please fill all of them." });
-        }
-
-        if (existingEmployeeCedula) {
+        } else if (existingEmployeeCedula) {
             res.status(409).json({ message: "An employee with this cedula already exists." });
-        } else if (existingEmployeeEmail) {
-            res.status(409).json({ message: "An employee with this email already exists." });
         } else {
-            const newEmployeeData = { ...employeeData, status: true}
             const newEmployee = await employeeService.createEmployee(newEmployeeData);
             res.status(201).json(newEmployee);
         }
-        
+       
     } catch (err) {
         const error = err as Error;
-        res.status(500).json({ message: error.message }); 
+        res.status(500).json({ message: error.message });
     }
 };
+
 
 const updateEmployee = async (req: Request, res: Response) => {
     const { id } = req.params;
     const employeeData = req.body;
-    const existingEmployeeEmail = await employeeService.findEmployeeByEmail(employeeData.email);
-    const existingEmployeeCedula = await employeeService.findEmployeeByCedula(employeeData.cedula);
 
     try {
+        const existingEmployeeUserName = await employeeService.findEmployeeByUserName(employeeData.user_name);
+        const updatedEmployee = await employeeService.updateEmployee(id, employeeData); 
 
-        if (!employeeData.full_name || !employeeData.email || !employeeData.cedula || !employeeData.price_per_hour || !employeeData.role) {
-            res.status(400).json({ message: "All fields are required, please fill all of them." });
-        } else if (existingEmployeeCedula) {
-            res.status(409).json({ message: "An employee with this cedula already exists." });
-        } else if (existingEmployeeEmail) {
-            res.status(409).json({ message: "An employee with this email already exists." });
+
+        // Check for required fields
+        if (!employeeData.full_name || !employeeData.cedula) {
+            res.status(400).json({ message: "All fields are required: full_name, user_name, and role_id." });
+        } else if (existingEmployeeUserName && existingEmployeeUserName.employee_id !== id) {
+            res.status(409).json({ message: "An employee with this user_name already exists." });
         } else {
-            const updatedEmployee = await employeeService.updateEmployee(id, employeeData); 
-            res.status(200).json(updatedEmployee); 
-        }
+            res.status(200).json(updatedEmployee);    
+        }   
 
     } catch (err) {
         const error = err as Error;
         res.status(500).json({ message: error.message });
     }
 };
+
 
 const deleteEmployee = async (req: Request, res: Response) => {
     const { id } = req.params; 

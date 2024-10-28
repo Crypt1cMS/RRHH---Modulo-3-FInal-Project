@@ -1,5 +1,6 @@
 import express from 'express';
 import * as employeeControllers from '../controllers/employeeController';
+import tokenAuthentication from '../middleware/jwtauth'
 const router = express.Router();
 
 router.get('/', employeeControllers.getEmployees);

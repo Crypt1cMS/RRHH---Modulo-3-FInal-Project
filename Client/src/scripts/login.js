@@ -24,7 +24,8 @@ loginForm.addEventListener('submit', async (event) => {
             console.log('Login Successful:', loginResponse.data.token);
 
             localStorage.setItem("token", `${loginResponse.data.token}`);
-            window.location.href = "../pages/index.html"
+            localStorage.setItem("username", data.username);
+            window.location.href = "../pages/home.html"
         }) 
         
         .catch((error) => {
